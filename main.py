@@ -12,6 +12,7 @@ hight = 60
 speed = 5
 coordinates = x, y
 
+
 def load_image(name, colorkey=None):
     fullname = os.path.join('data', name)
     try:
@@ -20,14 +21,14 @@ def load_image(name, colorkey=None):
         print('Cannot load image:', name)
         raise SystemExit(message)
     if colorkey is -1:
-            colorkey = image.get_at((0, 0))
-            image.set_colorkey(colorkey)
+        colorkey = image.get_at((0, 0))
+        image.set_colorkey(colorkey)
     image = image.convert_alpha()
     return image
 
+
 class Creature(pygame.sprite.Sprite):
     image = load_image("creature.png")
-
 
     def __init__(self, group):
         super().__init__(group)
@@ -49,19 +50,19 @@ while run:
         if event.type == pygame.QUIT:
             run = False
         elif event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_UP:
+            if event.key == pygame.K_UP and coordinates[1] > 5:
                 win.fill(pygame.Color("black"))
                 coordinates = coordinates[0], coordinates[1] - 10
                 Creature(all_sprites)
-            elif event.key == pygame.K_DOWN:
+            elif event.key == pygame.K_DOWN and coordinates[1] < 500 - 5 - hight:
                 win.fill(pygame.Color("black"))
                 coordinates = coordinates[0], coordinates[1] + 10
                 Creature(all_sprites)
-            elif event.key == pygame.K_RIGHT:
+            elif event.key == pygame.K_RIGHT and coordinates[0] < 500 - 5 - width:
                 win.fill(pygame.Color("black"))
                 coordinates = coordinates[0] + 10, coordinates[1]
                 Creature(all_sprites)
-            elif event.key == pygame.K_LEFT:
+            elif event.key == pygame.K_LEFT and coordinates[0] > 5:
                 win.fill(pygame.Color("black"))
                 coordinates = coordinates[0] - 10, coordinates[1]
                 Creature(all_sprites)
