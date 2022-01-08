@@ -1,77 +1,97 @@
 import pygame
-import os
 
 pygame.init()
-win = pygame.display.set_mode((500, 500))
-pygame.display.set_caption('PYGAME project')
+
+win = pygame.display.set_mode((720, 390))
+pygame.display.set_caption("First Game")
+
+walkRight = [pygame.image.load('R1.png'), pygame.image.load('R2.png'), pygame.image.load('R3.png'),
+             pygame.image.load('R4.png'), pygame.image.load('R5.png'), pygame.image.load('R6.png'),
+            pygame.image.load('R7.png'), pygame.image.load('R8.png'), pygame.image.load('R9.png')]
+walkLeft = [pygame.image.load('L1.png'), pygame.image.load('L2.png'), pygame.image.load('L3.png'),
+            pygame.image.load('L4.png'), pygame.image.load('L5.png'), pygame.image.load('L6.png'),
+            pygame.image.load('L7.png'), pygame.image.load('L8.png'), pygame.image.load('L9.png')]
+bg = pygame.image.load('fon.png')
+char = pygame.image.load('standing.png')
+char = pygame.transform.scale(char, (120, 200))
+
 
 x = 50
-y = 50
+y = 94
 width = 40
-hight = 60
-speed = 5
-coordinates = x, y
-
-def load_image(name, colorkey=None):
-    fullname = os.path.join('data', name)
-    try:
-        image = pygame.image.load(fullname)
-    except pygame.error as message:
-        print('Cannot load image:', name)
-        raise SystemExit(message)
-    if colorkey is -1:
-            colorkey = image.get_at((0, 0))
-            image.set_colorkey(colorkey)
-    image = image.convert_alpha()
-    return image
-
-class Creature(pygame.sprite.Sprite):
-    image = load_image("creature.png")
-
-
-    def __init__(self, group):
-        super().__init__(group)
-        self.image = Creature.image
-        self.rect = self.image.get_rect()
-        self.image = pygame.transform.scale(self.image, (70, 70))
-        self.rect.x = coordinates[0]
-        self.rect.y = coordinates[1]
-
+height = 60
+vel = 5
 
 clock = pygame.time.Clock()
-all_sprites = pygame.sprite.Group()
+
+isJump = False
+jumpCount = 10
+
+left = False
+right = False
+walkCount = 0
+
+
+def redrawGameWindow():
+    global walkCount
+
+    win.blit(bg, (0, 0))
+    if walkCount + 1 >= 27:
+        walkCount = 0
+
+    if left:
+        win.blit(walkLeft[walkCount // 3], (x, y))
+        walkCount += 1
+    elif right:
+        win.blit(walkRight[walkCount // 3], (x, y))
+        walkCount += 1
+    else:
+        win.blit(char, (x, y))
+        walkCount = 0
+
+    pygame.display.update()
+
 
 run = True
+
 while run:
-    all_sprites = pygame.sprite.Group()
-    pygame.time.delay(50)
+    clock.tick(27)
+
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             run = False
-        elif event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_UP:
-                win.fill(pygame.Color("black"))
-                coordinates = coordinates[0], coordinates[1] - 10
-                Creature(all_sprites)
-            elif event.key == pygame.K_DOWN:
-                win.fill(pygame.Color("black"))
-                coordinates = coordinates[0], coordinates[1] + 10
-                Creature(all_sprites)
-            elif event.key == pygame.K_RIGHT:
-                win.fill(pygame.Color("black"))
-                coordinates = coordinates[0] + 10, coordinates[1]
-                Creature(all_sprites)
-            elif event.key == pygame.K_LEFT:
-                win.fill(pygame.Color("black"))
-                coordinates = coordinates[0] - 10, coordinates[1]
-                Creature(all_sprites)
-    # pygame.draw.rect(win, (0, 255, 255), (x, y, width, hight))
-    Creature(all_sprites)
-    all_sprites.draw(win)
-    all_sprites.update()
-    all_sprites = pygame.sprite.Group().empty()
-    pygame.display.flip()
-    clock.tick(90)
-    pygame.display.update()
+
+    keys = pygame.key.get_pressed()
+
+    if keys[pygame.K_LEFT] and x > vel:
+        x -= vel
+        left = True
+        right = False
+
+    elif keys[pygame.K_RIGHT] and x < 500 - vel - width:
+        x += vel
+        left = False
+        right = True
+
+    else:
+        left = False
+        right = False
+        walkCount = 0
+
+    if not (isJump):
+        if keys[pygame.K_SPACE]:
+            isJump = True
+            left = False
+            right = False
+            walkCount = 0
+    else:
+        if jumpCount >= -10:
+            y -= (jumpCount * abs(jumpCount)) * 0.5
+            jumpCount -= 1
+        else:
+            jumpCount = 10
+            isJump = False
+
+    redrawGameWindow()
 
 pygame.quit()
