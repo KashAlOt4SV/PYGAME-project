@@ -38,6 +38,18 @@ class Creature(pygame.sprite.Sprite):
         self.rect.y = coordinates[1]
 
 
+class Creature_left(pygame.sprite.Sprite):
+    image = load_image("creature_left.png")
+
+    def __init__(self, group):
+        super().__init__(group)
+        self.image = Creature_left.image
+        self.rect = self.image.get_rect()
+        self.image = pygame.transform.scale(self.image, (70, 70))
+        self.rect.x = coordinates[0]
+        self.rect.y = coordinates[1]
+
+
 clock = pygame.time.Clock()
 all_sprites = pygame.sprite.Group()
 
@@ -49,24 +61,24 @@ while run:
         if event.type == pygame.QUIT:
             run = False
         elif event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_UP:
+            if event.key == pygame.K_UP and coordinates[1] > 5:
                 win.fill(pygame.Color("black"))
                 coordinates = coordinates[0], coordinates[1] - 10
                 Creature(all_sprites)
-            elif event.key == pygame.K_DOWN:
+            elif event.key == pygame.K_DOWN and coordinates[1] < 500 - 5 - hight:
                 win.fill(pygame.Color("black"))
                 coordinates = coordinates[0], coordinates[1] + 10
                 Creature(all_sprites)
-            elif event.key == pygame.K_RIGHT:
+            elif event.key == pygame.K_RIGHT and coordinates[0] < 500 - 30 - width:
                 win.fill(pygame.Color("black"))
                 coordinates = coordinates[0] + 10, coordinates[1]
                 Creature(all_sprites)
-            elif event.key == pygame.K_LEFT:
+            elif event.key == pygame.K_LEFT and coordinates[0] > 5:
                 win.fill(pygame.Color("black"))
                 coordinates = coordinates[0] - 10, coordinates[1]
-                Creature(all_sprites)
+                Creature_left(all_sprites)
+
     # pygame.draw.rect(win, (0, 255, 255), (x, y, width, hight))
-    Creature(all_sprites)
     all_sprites.draw(win)
     all_sprites.update()
     all_sprites = pygame.sprite.Group().empty()
