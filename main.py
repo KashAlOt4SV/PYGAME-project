@@ -3,7 +3,7 @@ import os
 
 pygame.init()
 
-win = pygame.display.set_mode((720, 390))
+win = pygame.display.set_mode((1350, 500))
 pygame.display.set_caption("First Game")
 
 
@@ -28,12 +28,12 @@ walkLeft = [load_image('L1.png'), load_image('L2.png'), load_image('L3.png'),
             load_image('L4.png'), load_image('L5.png'), load_image('L6.png'),
             load_image('L7.png'), load_image('L8.png'), load_image('L9.png')]
 
-bg = pygame.transform.scale(load_image('fon.png'), (720, 390))
-char = load_image('standing.png')
-char = pygame.transform.scale(char, (120, 200))
+bg = pygame.transform.scale(load_image('fon.png'), (1350, 500))
+char = load_image('standing_2.png')
+char = pygame.transform.scale(char, (180, 225))
 
 x = 50
-y = 94
+y = 150
 width = 40
 height = 60
 vel = 5
