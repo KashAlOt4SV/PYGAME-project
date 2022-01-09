@@ -97,7 +97,7 @@ while run:
         if event.type == pygame.MOUSEBUTTONDOWN:
             mouse = True
     for bullet in bullets:
-        if bullet.x < 680 and bullet.x > 0:
+        if bullet.x < 1350 and bullet.x > 0:
             bullet.x += bullet.vel
         else:
             bullets.pop(bullets.index(bullet))
@@ -118,7 +118,7 @@ while run:
         right = False
         lastPos = 'left'
 
-    elif keys[pygame.K_RIGHT] and x < 640 - vel - width:
+    elif keys[pygame.K_RIGHT] and x < 1250 - vel - width:
         x += vel
         left = False
         right = True
