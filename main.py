@@ -7,16 +7,16 @@ win = pygame.display.set_mode((1350, 500))
 pygame.display.set_caption("First Game")
 
 
-def load_image(name, colorkey=None):
+def load_image(name, color_key=None):
     fullname = os.path.join('data', name)
     try:
         image = pygame.image.load(fullname)
     except pygame.error as message:
         print('Cannot load image:', name)
         raise SystemExit(message)
-    if colorkey is -1:
-        colorkey = image.get_at((0, 0))
-        image.set_colorkey(colorkey)
+    if color_key is -1:
+        color_key = image.get_at((0, 0))
+        image.set_colorkey(color_key)
     image = image.convert_alpha()
     return image
 
@@ -88,6 +88,7 @@ def redrawGameWindow():
 run = True
 bullets = []
 mouse = False
+
 while run:
     clock.tick(27)
 
