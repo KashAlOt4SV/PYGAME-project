@@ -50,6 +50,8 @@ walkCount = 0
 lastPos = 'right'
 
 
+
+
 class projectile:
     def __init__(self, x, y, radius, color, facing):
         self.x = x
@@ -88,6 +90,9 @@ def redrawGameWindow():
 run = True
 bullets = []
 mouse = False
+Boba = False
+
+
 
 while run:
     clock.tick(27)
@@ -114,21 +119,55 @@ while run:
             bullets.append(projectile(round(x + width // 2), round(y + height // 2), 4, (255, 0, 0), facing))
 
     if keys[pygame.K_LEFT] and x > vel:
-        x -= vel
-        left = True
-        right = False
-        lastPos = 'left'
+        if x != 555:
+            x -= vel
+            left = True
+            right = False
+            lastPos = 'left'
+            print(x, y)
+        elif x == 355 and y < 150:
+            x -= vel
+            left = True
+            right = False
+            lastPos = 'left'
+            print(x, y)
+        if x > 355 and x < 560 and y < 60 and y > 50:
+            x -= vel
+            left = True
+            right = False
+            lastPos = 'left'
+            Boba = False
+        else:
+            Boba = True
 
     elif keys[pygame.K_RIGHT] and x < 1250 - vel - width:
-        x += vel
-        left = False
-        right = True
-        lastPos = 'right'
+        if x != 355:
+            x += vel
+            left = False
+            right = True
+            lastPos = 'right'
+        elif x == 355 and y < 150:
+            x += vel
+            left = False
+            right = True
+            lastPos = 'right'
+        if x > 355 and x < 560 and y < 60 and y > 50:
+            x += vel
+            left = False
+            right = True
+            lastPos = 'right'
+            Boba = False
+        else:
+            Boba = True
+
+
+        print(x, y)
 
     else:
         left = False
         right = False
         walkCount = 0
+        print(x, y)
 
     if not isJump:
         if keys[pygame.K_SPACE]:
@@ -136,14 +175,25 @@ while run:
             left = False
             right = False
             walkCount = 0
+            print(x, y)
     else:
         if jumpCount >= -10:
-            y -= (jumpCount * abs(jumpCount)) * 0.5
-            jumpCount -= 1
+            if Boba:
+                y -= (jumpCount * abs(jumpCount)) * 0.3
+                jumpCount -= 1
+            if (410 < x < 525 and y <= 51):
+                if keys[pygame.K_SPACE]:
+                    isJump = True
+                    left = False
+                    right = False
+                    walkCount = 0
+                    y -= (jumpCount * abs(jumpCount)) * 0.3
+                    jumpCount -= 1
+                    print(x, y)
         else:
             jumpCount = 10
             isJump = False
-
+    print(x, y)
     redrawGameWindow()
 
 pygame.quit()
