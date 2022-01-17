@@ -6,7 +6,7 @@ import time
 import os
 
 pygame.init()
-vec = pygame.math.Vector2  # 2 for two dimensional
+vec = pygame.math.Vector2
 
 HEIGHT = 450
 WIDTH = 400
@@ -16,11 +16,14 @@ FPS = 60
 
 FramePerSec = pygame.time.Clock()
 
-pygame.mixer.music.load('soundtrack.mp3')
+fullname = os.path.join('data', 'pryshok.mp3')
+sound1 = pygame.mixer.Sound(fullname)
+
+pygame.mixer.music.load(os.path.join('data', 'soundtrack.mp3'))
 pygame.mixer.music.set_volume(0.5)
 pygame.mixer.music.play()
 
-sound1 = pygame.mixer.Sound('pryshok.mp3')
+
 
 displaysurface = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Game")
@@ -172,7 +175,7 @@ def show_go_screen():
 class platform(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
-        self.surf = pygame.image.load("platform.png")
+        self.surf = load_image("platform.png")
         self.rect = self.surf.get_rect(center=(random.randint(0, WIDTH - 60),
                                                random.randint(0, HEIGHT - 30)))
         self.speed = random.randint(-1, 2)
@@ -256,8 +259,9 @@ while True:
                 P1.jump()
         if event.type == pygame.KEYUP:
             if event.key == pygame.K_SPACE:
-                P1.cancel_jump()
                 sound1.play()
+                P1.cancel_jump()
+
 
     if P1.rect.top > HEIGHT:
         for entity in all_sprites:
