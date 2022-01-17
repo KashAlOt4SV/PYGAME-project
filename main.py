@@ -5,8 +5,6 @@ import random
 import time
 import os
 
-
-
 pygame.init()
 vec = pygame.math.Vector2  # 2 for two dimensional
 
@@ -26,8 +24,6 @@ sound1 = pygame.mixer.Sound('pryshok.mp3')
 
 displaysurface = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Game")
-
-
 
 
 def terminate():
@@ -51,7 +47,10 @@ def load_image(name, color_key=None):
         image = image.convert_alpha()
     return image
 
+
 bg = pygame.transform.scale(load_image('fon_dodle.png'), (WIDTH, HEIGHT))
+background_rect = bg.get_rect()
+
 
 def start_screen():
     fon = pygame.transform.scale(load_image('Start_Fon.png'), (WIDTH, HEIGHT))
@@ -72,9 +71,12 @@ def start_screen():
 
 
 class Player(pygame.sprite.Sprite):
+
+    score = 0
+
     def __init__(self):
         super().__init__()
-        self.char = load_image('character.png')
+        self.char = load_image('character_2.png')
         self.surf = pygame.transform.scale(self.char, (50, 50))
         self.surf.blit(self.char, (0, 0))
         self.rect = self.surf.get_rect()
@@ -82,7 +84,7 @@ class Player(pygame.sprite.Sprite):
         self.vel = vec(0, 0)
         self.acc = vec(0, 0)
         self.jumping = False
-        self.score = 0
+        global score
 
     def move(self):
         self.acc = vec(0, 0.5)
@@ -117,16 +119,54 @@ class Player(pygame.sprite.Sprite):
                 self.vel.y = -3
 
     def update(self):
+        global score
         hits = pygame.sprite.spritecollide(self, platforms, False)
         if self.vel.y > 0:
             if hits:
                 if self.pos.y < hits[0].rect.bottom:
                     if hits[0].point == True:
                         hits[0].point = False
-                        self.score += 1
+                        Player.score += 1
                     self.pos.y = hits[0].rect.top + 1
                     self.vel.y = 0
                     self.jumping = False
+
+
+font_name = pygame.font.match_font('arial')
+WHITE = (255, 255, 255)
+
+
+def draw_text(surf, text, size, x, y):
+    font = pygame.font.Font(font_name, size)
+    text_surface = font.render(text, True, WHITE)
+    text_rect = text_surface.get_rect()
+    text_rect.midtop = (x, y)
+    surf.blit(text_surface, text_rect)
+
+
+def show_go_screen():
+    displaysurface.blit(bg, background_rect)
+    draw_text(displaysurface, "Провал!", 64, WIDTH / 2, HEIGHT / 4)
+    draw_text(displaysurface, "Ваш счёт составил: {}".format(Player.score), 18,
+              WIDTH / 2, HEIGHT / 2)
+    draw_text(displaysurface, "Начать заново", 18, WIDTH / 2, HEIGHT * 3 / 4)
+    pygame.display.flip()
+    waiting = True
+
+    while waiting:
+        FramePerSec.tick(FPS)
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+            if event.type == pygame.KEYUP:
+                waiting = False
+            elif event.type == pygame.MOUSEBUTTONDOWN and 148 <= pygame.mouse.get_pos()[0] <= 267 and 297 <= \
+                    pygame.mouse.get_pos()[1] <= 353:
+                print(1)
+
+            pygame.display.flip()
+            FramePerSec.tick(FPS)
+
 
 
 class platform(pygame.sprite.Sprite):
@@ -181,7 +221,7 @@ PT1 = platform()
 P1 = Player()
 
 PT1.surf = pygame.Surface((WIDTH, 20))
-PT1.surf.fill((255, 0, 0))
+PT1.surf.fill((100, 100, 100))
 PT1.rect = PT1.surf.get_rect(center=(WIDTH / 2, HEIGHT - 10))
 
 all_sprites = pygame.sprite.Group()
@@ -223,11 +263,9 @@ while True:
         for entity in all_sprites:
             entity.kill()
             time.sleep(1)
-            displaysurface.fill((255, 0, 0))
+            show_go_screen()
             pygame.display.update()
             time.sleep(1)
-            pygame.quit()
-            sys.exit()
 
     if P1.rect.top <= HEIGHT / 3:
         P1.pos.y += abs(P1.vel.y)
