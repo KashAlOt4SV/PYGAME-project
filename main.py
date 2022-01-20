@@ -63,7 +63,6 @@ def start_screen():
             elif event.type == pygame.MOUSEBUTTONDOWN and 148 <= pygame.mouse.get_pos()[0] <= 267 and 217 <= \
                     pygame.mouse.get_pos()[1] <= 271:
                 return  # начинаем игру
-                start_game()
             elif event.type == pygame.MOUSEBUTTONDOWN and 148 <= pygame.mouse.get_pos()[0] <= 267 and 297 <= \
                     pygame.mouse.get_pos()[1] <= 353:
                 print(1)
@@ -144,27 +143,6 @@ def draw_text(surf, text, size, x, y):
     surf.blit(text_surface, text_rect)
 
 
-def show_go_screen():
-    displaysurface.blit(bg, background_rect)
-    draw_text(displaysurface, "Провал!", 64, WIDTH / 2, HEIGHT / 4)
-    draw_text(displaysurface, "Ваш счёт составил: {}".format(Player.score), 18,
-              WIDTH / 2, HEIGHT / 2)
-    draw_text(displaysurface, "Начать заново", 18, WIDTH / 2, HEIGHT * 3 / 4)
-    pygame.display.flip()
-    waiting = True
-
-    while waiting:
-        FramePerSec.tick(FPS)
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-            if event.type == pygame.KEYUP:
-                waiting = False
-            elif event.type == pygame.MOUSEBUTTONDOWN and 148 <= pygame.mouse.get_pos()[0] <= 267 and 297 <= \
-                    pygame.mouse.get_pos()[1] <= 353:
-                start_screen()
-
-
 class platform(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
@@ -242,7 +220,9 @@ for x in range(random.randint(4, 5)):
 start_screen()
 
 
+
 def start_game():
+    restart = False
     while True:
         P1.update()
         for event in pygame.event.get():
@@ -256,7 +236,36 @@ def start_game():
                 if event.key == pygame.K_SPACE:
                     sound1.play()
                     P1.cancel_jump()
+            if event.type == pygame.K_ESCAPE:
+                restart = True
+        if restart:
+            if P1.rect.top > HEIGHT:
+                for entity in all_sprites:
+                    entity.kill()
+                    time.sleep(1)
+                    show_go_screen()
+                    pygame.display.update()
+                    time.sleep(1)
 
+            if P1.rect.top <= HEIGHT / 3:
+                P1.pos.y += abs(P1.vel.y)
+                for plat in platforms:
+                    plat.rect.y += abs(P1.vel.y)
+                    if plat.rect.top >= HEIGHT:
+                        plat.kill()
+
+            plat_gen()
+            displaysurface.blit(bg, (0, 0))
+            f = pygame.font.SysFont("Verdana", 20)
+            g = f.render(str(P1.score), True, (123, 255, 0))
+            displaysurface.blit(g, (WIDTH / 2, 10))
+
+            for entity in all_sprites:
+                displaysurface.blit(entity.surf, entity.rect)
+                entity.move()
+
+            pygame.display.update()
+            FramePerSec.tick(FPS)
         if P1.rect.top > HEIGHT:
             for entity in all_sprites:
                 entity.kill()
@@ -284,6 +293,27 @@ def start_game():
 
         pygame.display.update()
         FramePerSec.tick(FPS)
+
+
+def show_go_screen():
+    displaysurface.blit(bg, background_rect)
+    draw_text(displaysurface, "Провал!", 64, WIDTH / 2, HEIGHT / 4)
+    draw_text(displaysurface, "Ваш счёт составил: {}".format(Player.score), 18,
+              WIDTH / 2, HEIGHT / 2)
+    draw_text(displaysurface, "Начать заново", 18, WIDTH / 2, HEIGHT * 3 / 4)
+    pygame.display.flip()
+    waiting = True
+
+    while waiting:
+        FramePerSec.tick(FPS)
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+            if event.type == pygame.KEYUP:
+                waiting = False
+            elif event.type == pygame.MOUSEBUTTONDOWN and 148 <= pygame.mouse.get_pos()[0] <= 267 and 297 <= \
+                    pygame.mouse.get_pos()[1] <= 353:
+                start_game()
 
 
 start_screen()
