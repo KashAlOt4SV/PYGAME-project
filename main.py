@@ -23,8 +23,6 @@ pygame.mixer.music.load(os.path.join('data', 'soundtrack.mp3'))
 pygame.mixer.music.set_volume(0.5)
 pygame.mixer.music.play()
 
-
-
 displaysurface = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Game")
 
@@ -74,7 +72,6 @@ def start_screen():
 
 
 class Player(pygame.sprite.Sprite):
-
     score = 0
 
     def __init__(self):
@@ -167,10 +164,6 @@ def show_go_screen():
                     pygame.mouse.get_pos()[1] <= 353:
                 print(1)
 
-            pygame.display.flip()
-            FramePerSec.tick(FPS)
-
-
 
 class platform(pygame.sprite.Sprite):
     def __init__(self):
@@ -261,7 +254,6 @@ while True:
             if event.key == pygame.K_SPACE:
                 sound1.play()
                 P1.cancel_jump()
-
 
     if P1.rect.top > HEIGHT:
         for entity in all_sprites:
