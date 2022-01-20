@@ -63,6 +63,7 @@ def start_screen():
             elif event.type == pygame.MOUSEBUTTONDOWN and 148 <= pygame.mouse.get_pos()[0] <= 267 and 217 <= \
                     pygame.mouse.get_pos()[1] <= 271:
                 return  # начинаем игру
+                start_game()
             elif event.type == pygame.MOUSEBUTTONDOWN and 148 <= pygame.mouse.get_pos()[0] <= 267 and 297 <= \
                     pygame.mouse.get_pos()[1] <= 353:
                 print(1)
@@ -84,7 +85,6 @@ class Player(pygame.sprite.Sprite):
         self.vel = vec(0, 0)
         self.acc = vec(0, 0)
         self.jumping = False
-        global score
 
     def move(self):
         self.acc = vec(0, 0.5)
@@ -162,7 +162,7 @@ def show_go_screen():
                 waiting = False
             elif event.type == pygame.MOUSEBUTTONDOWN and 148 <= pygame.mouse.get_pos()[0] <= 267 and 297 <= \
                     pygame.mouse.get_pos()[1] <= 353:
-                print(1)
+                start_screen()
 
 
 class platform(pygame.sprite.Sprite):
@@ -241,44 +241,50 @@ for x in range(random.randint(4, 5)):
 
 start_screen()
 
-while True:
-    P1.update()
-    for event in pygame.event.get():
-        if event.type == QUIT:
-            pygame.quit()
-            sys.exit()
-        if event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_SPACE:
-                P1.jump()
-        if event.type == pygame.KEYUP:
-            if event.key == pygame.K_SPACE:
-                sound1.play()
-                P1.cancel_jump()
 
-    if P1.rect.top > HEIGHT:
+def start_game():
+    while True:
+        P1.update()
+        for event in pygame.event.get():
+            if event.type == QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE:
+                    P1.jump()
+            if event.type == pygame.KEYUP:
+                if event.key == pygame.K_SPACE:
+                    sound1.play()
+                    P1.cancel_jump()
+
+        if P1.rect.top > HEIGHT:
+            for entity in all_sprites:
+                entity.kill()
+                time.sleep(1)
+                show_go_screen()
+                pygame.display.update()
+                time.sleep(1)
+
+        if P1.rect.top <= HEIGHT / 3:
+            P1.pos.y += abs(P1.vel.y)
+            for plat in platforms:
+                plat.rect.y += abs(P1.vel.y)
+                if plat.rect.top >= HEIGHT:
+                    plat.kill()
+
+        plat_gen()
+        displaysurface.blit(bg, (0, 0))
+        f = pygame.font.SysFont("Verdana", 20)
+        g = f.render(str(P1.score), True, (123, 255, 0))
+        displaysurface.blit(g, (WIDTH / 2, 10))
+
         for entity in all_sprites:
-            entity.kill()
-            time.sleep(1)
-            show_go_screen()
-            pygame.display.update()
-            time.sleep(1)
+            displaysurface.blit(entity.surf, entity.rect)
+            entity.move()
 
-    if P1.rect.top <= HEIGHT / 3:
-        P1.pos.y += abs(P1.vel.y)
-        for plat in platforms:
-            plat.rect.y += abs(P1.vel.y)
-            if plat.rect.top >= HEIGHT:
-                plat.kill()
+        pygame.display.update()
+        FramePerSec.tick(FPS)
 
-    plat_gen()
-    displaysurface.blit(bg, (0, 0))
-    f = pygame.font.SysFont("Verdana", 20)
-    g = f.render(str(P1.score), True, (123, 255, 0))
-    displaysurface.blit(g, (WIDTH / 2, 10))
 
-    for entity in all_sprites:
-        displaysurface.blit(entity.surf, entity.rect)
-        entity.move()
-
-    pygame.display.update()
-    FramePerSec.tick(FPS)
+start_screen()
+start_game()
