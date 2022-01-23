@@ -1,3 +1,5 @@
+# Импортируем модули
+
 import pygame
 from pygame.locals import *
 import sys
@@ -9,14 +11,17 @@ import ctypes
 pygame.init()
 vec = pygame.math.Vector2
 
+# Вносим базовые параметры
 HEIGHT = 450
 WIDTH = 400
 ACC = 0.5
 FRIC = -0.12
 FPS = 60
 
+# Уставновка времени тика
 FramePerSec = pygame.time.Clock()
 
+# Импорт музыкальных эффектов
 fullname = os.path.join('data', 'pryshok.mp3')
 sound1 = pygame.mixer.Sound(fullname)
 
@@ -24,15 +29,18 @@ pygame.mixer.music.load(os.path.join('data', 'soundtrack.mp3'))
 pygame.mixer.music.set_volume(0.5)
 pygame.mixer.music.play()
 
+# Установка размеров экрана
 displaysurface = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption("Game")
 
 
+# Функция выхода из программы
 def terminate():
     pygame.quit()
     sys.exit()
 
 
+# Функция загрузки изображения
 def load_image(name, color_key=None):
     fullname = os.path.join('data', name)
     try:
@@ -50,6 +58,7 @@ def load_image(name, color_key=None):
     return image
 
 
+# Создание картинок
 bg = pygame.transform.scale(load_image('fon_dodle.png'), (WIDTH, HEIGHT))
 background_rect = bg.get_rect()
 bg_end = pygame.transform.scale(load_image('End_Fon.png'), (WIDTH, HEIGHT))
@@ -57,12 +66,13 @@ start_desk = pygame.transform.scale(load_image('StartName.png'), (WIDTH, HEIGHT)
 stat_fon = pygame.transform.scale(load_image('StatFon.png'), (WIDTH, HEIGHT))
 
 
+# Класс персонажа
 class Player(pygame.sprite.Sprite):
     score = 0
 
     def __init__(self):
         super().__init__()
-        self.char = load_image('character_2.png')
+        self.char = load_image('character.png')
         self.surf = pygame.transform.scale(self.char, (50, 50))
         self.surf.blit(self.char, (0, 0))
         self.rect = self.surf.get_rect()
@@ -71,6 +81,7 @@ class Player(pygame.sprite.Sprite):
         self.acc = vec(0, 0)
         self.jumping = False
 
+    # Функция передвижения
     def move(self):
         self.acc = vec(0, 0.5)
 
@@ -92,17 +103,20 @@ class Player(pygame.sprite.Sprite):
 
         self.rect.midbottom = self.pos
 
+    # Функция прыжка
     def jump(self):
         hits = pygame.sprite.spritecollide(self, platforms, False)
         if hits and not self.jumping:
             self.jumping = True
             self.vel.y = -15
 
+    # Функция отмены
     def cancel_jump(self):
         if self.jumping:
             if self.vel.y < -3:
                 self.vel.y = -3
 
+    # Функция обновления спрайта на новой позиции
     def update(self):
         global score
         hits = pygame.sprite.spritecollide(self, platforms, False)
@@ -117,10 +131,12 @@ class Player(pygame.sprite.Sprite):
                     self.jumping = False
 
 
+# Установка шрифта
 font_name = pygame.font.match_font('arial')
 WHITE = (255, 255, 255)
 
 
+# Функция для написания текста в дальнейшем
 def draw_text(surf, text, size, x, y):
     font = pygame.font.Font(font_name, size)
     text_surface = font.render(text, True, WHITE)
@@ -129,6 +145,7 @@ def draw_text(surf, text, size, x, y):
     surf.blit(text_surface, text_rect)
 
 
+# Класс платформ
 class platform(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
@@ -140,6 +157,7 @@ class platform(pygame.sprite.Sprite):
         self.point = True
         self.moving = True
 
+    # Функция движения платформ
     def move(self):
         if self.moving == True:
             self.rect.move_ip(self.speed, 0)
@@ -149,6 +167,7 @@ class platform(pygame.sprite.Sprite):
                 self.rect.left = WIDTH
 
 
+# Функция проверки на касание платформ
 def check(platform, groupies):
     if pygame.sprite.spritecollideany(platform, groupies):
         return True
@@ -162,6 +181,7 @@ def check(platform, groupies):
         C = False
 
 
+# Функция генерации платформ на экране
 def plat_gen():
     while len(platforms) < 6:
         width = random.randrange(50, 100)
@@ -206,6 +226,7 @@ for x in range(random.randint(4, 5)):
 USER_NAME = None
 
 
+# Функция запуска игры
 def start_game():
     global USER_NAME
     while True:
@@ -221,6 +242,7 @@ def start_game():
                 if event.key == pygame.K_SPACE:
                     sound1.play()
                     P1.cancel_jump()
+                # В случае падения на дно:
             if P1.rect.top > HEIGHT:
                 for entity in all_sprites:
                     entity.kill()
@@ -277,6 +299,8 @@ def start_game():
         FramePerSec.tick(FPS)
 
 
+# Функция перехода на экран финала
+
 def show_go_screen():
     FullFile = os.path.join('data', 'records.txt')
     RecordsFile = open(FullFile, 'a')
@@ -309,6 +333,7 @@ def show_go_screen():
                 waiting = False
 
 
+# Функция перехода на экран статистики (рекордов)
 def RecordStatistic():
     displaysurface.blit(stat_fon, background_rect)
     FullFile = os.path.join('data', 'records.txt')
@@ -349,6 +374,7 @@ def RecordStatistic():
             start_screen()
 
 
+# Функция вызова стартового окна
 def start_screen():
     global USER_NAME
     fon = pygame.transform.scale(load_image('Start_Fon.png'), (WIDTH, HEIGHT))
@@ -371,7 +397,8 @@ def start_screen():
             text_name = font.render(name, True, (255, 255, 255))
             displaysurface.blit(text_name, (130, 380))
             pygame.display.update()
-            if event.type == pygame.QUIT:  # (148, 217), (267, 271)
+            # Привязка кнопок
+            if event.type == pygame.QUIT:
                 terminate()
             elif event.type == pygame.MOUSEBUTTONDOWN and 148 <= pygame.mouse.get_pos()[0] <= 267 and 217 <= \
                     pygame.mouse.get_pos()[1] <= 271:
@@ -391,5 +418,6 @@ def start_screen():
             FramePerSec.tick(FPS)
 
 
+# Запуск стартового окна и игры
 start_screen()
 start_game()
