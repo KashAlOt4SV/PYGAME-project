@@ -51,6 +51,7 @@ def load_image(name, color_key=None):
 
 bg = pygame.transform.scale(load_image('fon_dodle.png'), (WIDTH, HEIGHT))
 background_rect = bg.get_rect()
+bg_end = pygame.transform.scale(load_image('End_Fon.png'), (WIDTH, HEIGHT))
 
 
 def start_screen():
@@ -220,7 +221,6 @@ for x in range(random.randint(4, 5)):
 start_screen()
 
 
-
 def start_game():
     restart = False
     while True:
@@ -296,11 +296,9 @@ def start_game():
 
 
 def show_go_screen():
-    displaysurface.blit(bg, background_rect)
-    draw_text(displaysurface, "Провал!", 64, WIDTH / 2, HEIGHT / 4)
+    displaysurface.blit(bg_end, background_rect)
     draw_text(displaysurface, "Ваш счёт составил: {}".format(Player.score), 18,
-              WIDTH / 2, HEIGHT / 2)
-    draw_text(displaysurface, "Начать заново", 18, WIDTH / 2, HEIGHT * 3 / 4)
+              WIDTH / 2, 170)
     pygame.display.flip()
     waiting = True
 
@@ -311,9 +309,14 @@ def show_go_screen():
                 pygame.quit()
             if event.type == pygame.KEYUP:
                 waiting = False
-            elif event.type == pygame.MOUSEBUTTONDOWN and 148 <= pygame.mouse.get_pos()[0] <= 267 and 297 <= \
-                    pygame.mouse.get_pos()[1] <= 353:
+            elif event.type == pygame.MOUSEBUTTONDOWN and 119 <= pygame.mouse.get_pos()[0] <= 283 and 238 <= \
+                    pygame.mouse.get_pos()[1] <= 282:
+                pass
+            elif event.type == pygame.MOUSEBUTTONDOWN and 119 <= pygame.mouse.get_pos()[0] <= 283 and 308 <= \
+                    pygame.mouse.get_pos()[1] <= 352:
+                start_screen()
                 start_game()
+
 
 
 start_screen()
