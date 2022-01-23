@@ -282,16 +282,14 @@ def start_game():
 def show_go_screen():
     FullFile = os.path.join('data', 'records.txt')
     RecordsFile = open(FullFile, 'a')
-    Forma = open(FullFile, mode="rt")
-    FileText = Forma.readlines()
 
     if USER_NAME != 'Введите имя':
         if (' ' + str(USER_NAME) + ' - ') in str(FileText):
-            print(1)
+            print('Имя уже зарегистрировано')
         else:
-            RecordsFile.write(str(' ' + USER_NAME + ' - ' + str(Player.score) + '\n'))
+            RecordsFile.write(str(' ' + str(USER_NAME) + ' - ' + str(Player.score) + '\n'))
     RecordsFile.close()
-    Forma.close()
+
 
     displaysurface.blit(bg_end, background_rect)
     draw_text(displaysurface, "Ваш счёт составил: {}".format(Player.score), 18,
@@ -309,6 +307,27 @@ def show_go_screen():
                 waiting = False
 
 
+def RecordStatistic():
+    displaysurface.blit(bg, background_rect)
+    FullFile = os.path.join('data', 'records.txt')
+    Forma = open(FullFile, mode="rt")
+    FileText = Forma.readlines()
+
+    for i in range(len(FileText)):
+        FileTexts = FileText[i].split(' ')
+
+        draw_text(displaysurface, '{} место - {}, счёт: {}'.format(i + 1, FileTexts[1], str(FileTexts[3])), 18,
+                  WIDTH / 2, 185 + i * 30)
+    pygame.display.flip()
+    FramePerSec.tick(FPS)
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            pygame.quit()
+        elif event.type == pygame.MOUSEBUTTONDOWN and 148 <= pygame.mouse.get_pos()[0] <= 267 and 307 <= \
+                pygame.mouse.get_pos()[1] <= 371:
+            start_screen()
+
+
 def start_screen():
     global USER_NAME
     fon = pygame.transform.scale(load_image('Start_Fon.png'), (WIDTH, HEIGHT))
@@ -320,8 +339,6 @@ def start_screen():
             if event.type == pygame.KEYDOWN:
                 if event.unicode.isalpha() and len(name) <= 13:
                     name += event.unicode
-                elif event.key == pygame.K_SPACE and len(name) <= 13:
-                    name += ' '
                 elif event.key == pygame.K_BACKSPACE:
                     if name == "Введите имя":
                         name = ''
@@ -341,7 +358,7 @@ def start_screen():
 
             elif event.type == pygame.MOUSEBUTTONDOWN and 148 <= pygame.mouse.get_pos()[0] <= 267 and 297 <= \
                     pygame.mouse.get_pos()[1] <= 353:
-                print(1)
+                RecordStatistic()
 
             pygame.display.flip()
             FramePerSec.tick(FPS)
