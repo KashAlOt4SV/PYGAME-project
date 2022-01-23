@@ -280,6 +280,19 @@ def start_game():
 
 
 def show_go_screen():
+    FullFile = os.path.join('data', 'records.txt')
+    RecordsFile = open(FullFile, 'a')
+    Forma = open(FullFile, mode="rt")
+    FileText = Forma.readlines()
+
+    if USER_NAME != 'Введите имя':
+        if str(USER_NAME) in FileText:
+            print(1)
+        else:
+            RecordsFile.write(str(' ' + USER_NAME + ' - ' + str(Player.score) + '\n'))
+    RecordsFile.close()
+    Forma.close()
+
     displaysurface.blit(bg_end, background_rect)
     draw_text(displaysurface, "Ваш счёт составил: {}".format(Player.score), 18,
               WIDTH / 2, 185)
@@ -287,7 +300,6 @@ def show_go_screen():
               WIDTH / 2, 370)
     pygame.display.flip()
     waiting = True
-    print(USER_NAME)
     while waiting:
         FramePerSec.tick(FPS)
         for event in pygame.event.get():
@@ -295,13 +307,6 @@ def show_go_screen():
                 pygame.quit()
             if event.type == pygame.KEYUP:
                 waiting = False
-            elif event.type == pygame.MOUSEBUTTONDOWN and 119 <= pygame.mouse.get_pos()[0] <= 283 and 238 <= \
-                    pygame.mouse.get_pos()[1] <= 282:
-                pass
-            elif event.type == pygame.MOUSEBUTTONDOWN and 119 <= pygame.mouse.get_pos()[0] <= 283 and 308 <= \
-                    pygame.mouse.get_pos()[1] <= 352:
-                start_screen()
-                start_game()
 
 
 def start_screen():
@@ -313,13 +318,16 @@ def start_screen():
         font = pygame.font.SysFont("Verdana", 20)
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN:
-                if event.unicode.isalpha():
+                if event.unicode.isalpha() and len(name) <= 13:
                     name += event.unicode
+                elif event.key == pygame.K_SPACE and len(name) <= 13:
+                    name += ' '
                 elif event.key == pygame.K_BACKSPACE:
                     if name == "Введите имя":
                         name = ''
                     else:
                         name = name[0:-1]
+
             USER_NAME = name
             displaysurface.blit(start_desk, (0, 0))
             text_name = font.render(name, True, (255, 255, 255))
