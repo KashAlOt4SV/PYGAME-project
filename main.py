@@ -52,6 +52,7 @@ def load_image(name, color_key=None):
 bg = pygame.transform.scale(load_image('fon_dodle.png'), (WIDTH, HEIGHT))
 background_rect = bg.get_rect()
 bg_end = pygame.transform.scale(load_image('End_Fon.png'), (WIDTH, HEIGHT))
+start_desk = pygame.transform.scale(load_image('StartName.png'), (WIDTH, HEIGHT))
 
 
 def start_screen():
@@ -67,7 +68,15 @@ def start_screen():
             elif event.type == pygame.MOUSEBUTTONDOWN and 148 <= pygame.mouse.get_pos()[0] <= 267 and 297 <= \
                     pygame.mouse.get_pos()[1] <= 353:
                 print(1)
-
+            name = "Введите Имя"
+            draw_text(displaysurface, name.format(Player.score), 15,
+                      WIDTH / 2, 390)
+            if event.type == pygame.KEYDOWN:
+                if event.unicode.isalpha():
+                    name += event.unicode
+                    draw_text(displaysurface, name.format(Player.score), 15,
+                              WIDTH / 2, 390)
+                displaysurface.blit(start_desk, (0, 0))
         pygame.display.flip()
         FramePerSec.tick(FPS)
 
@@ -220,9 +229,11 @@ for x in range(random.randint(4, 5)):
 
 start_screen()
 
+USER_NAME = None
 
 
 def start_game():
+    global USER_NAME
     restart = False
     while True:
         P1.update()
@@ -300,7 +311,7 @@ def show_go_screen():
     displaysurface.blit(bg_end, background_rect)
     draw_text(displaysurface, "Ваш счёт составил: {}".format(Player.score), 18,
               WIDTH / 2, 185)
-    draw_text(displaysurface, "Пеоезапустите программу для новой попытки!".format(Player.score), 18,
+    draw_text(displaysurface, "Перезапустите программу для новой попытки!".format(Player.score), 18,
               WIDTH / 2, 370)
     pygame.display.flip()
     waiting = True
