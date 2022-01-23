@@ -207,7 +207,7 @@ platforms = pygame.sprite.Group()
 platforms.add(PT1)
 
 PT1.moving = False
-PT1.point = False  ##
+PT1.point = False
 
 for x in range(random.randint(4, 5)):
     C = True
@@ -219,6 +219,7 @@ for x in range(random.randint(4, 5)):
     all_sprites.add(pl)
 
 start_screen()
+
 
 
 def start_game():
@@ -298,7 +299,9 @@ def start_game():
 def show_go_screen():
     displaysurface.blit(bg_end, background_rect)
     draw_text(displaysurface, "Ваш счёт составил: {}".format(Player.score), 18,
-              WIDTH / 2, 170)
+              WIDTH / 2, 185)
+    draw_text(displaysurface, "Пеоезапустите программу для новой попытки!".format(Player.score), 18,
+              WIDTH / 2, 370)
     pygame.display.flip()
     waiting = True
 
@@ -316,7 +319,6 @@ def show_go_screen():
                     pygame.mouse.get_pos()[1] <= 352:
                 start_screen()
                 start_game()
-
 
 
 start_screen()
