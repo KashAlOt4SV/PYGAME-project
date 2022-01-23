@@ -286,7 +286,7 @@ def show_go_screen():
     FileText = Forma.readlines()
 
     if USER_NAME != 'Введите имя':
-        if str(USER_NAME) in FileText:
+        if (' ' + str(USER_NAME) + ' - ') in str(FileText):
             print(1)
         else:
             RecordsFile.write(str(' ' + USER_NAME + ' - ' + str(Player.score) + '\n'))
