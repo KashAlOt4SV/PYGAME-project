@@ -55,32 +55,6 @@ bg_end = pygame.transform.scale(load_image('End_Fon.png'), (WIDTH, HEIGHT))
 start_desk = pygame.transform.scale(load_image('StartName.png'), (WIDTH, HEIGHT))
 
 
-def start_screen():
-    fon = pygame.transform.scale(load_image('Start_Fon.png'), (WIDTH, HEIGHT))
-    displaysurface.blit(fon, (0, 0))
-    while True:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:  # (148, 217), (267, 271)
-                terminate()
-            elif event.type == pygame.MOUSEBUTTONDOWN and 148 <= pygame.mouse.get_pos()[0] <= 267 and 217 <= \
-                    pygame.mouse.get_pos()[1] <= 271:
-                return  # начинаем игру
-            elif event.type == pygame.MOUSEBUTTONDOWN and 148 <= pygame.mouse.get_pos()[0] <= 267 and 297 <= \
-                    pygame.mouse.get_pos()[1] <= 353:
-                print(1)
-            name = "Введите Имя"
-            draw_text(displaysurface, name.format(Player.score), 15,
-                      WIDTH / 2, 390)
-            if event.type == pygame.KEYDOWN:
-                if event.unicode.isalpha():
-                    name += event.unicode
-                    draw_text(displaysurface, name.format(Player.score), 15,
-                              WIDTH / 2, 390)
-                displaysurface.blit(start_desk, (0, 0))
-        pygame.display.flip()
-        FramePerSec.tick(FPS)
-
-
 class Player(pygame.sprite.Sprite):
     score = 0
 
@@ -227,8 +201,6 @@ for x in range(random.randint(4, 5)):
     platforms.add(pl)
     all_sprites.add(pl)
 
-start_screen()
-
 USER_NAME = None
 
 
@@ -315,7 +287,7 @@ def show_go_screen():
               WIDTH / 2, 370)
     pygame.display.flip()
     waiting = True
-
+    print(USER_NAME)
     while waiting:
         FramePerSec.tick(FPS)
         for event in pygame.event.get():
@@ -330,6 +302,41 @@ def show_go_screen():
                     pygame.mouse.get_pos()[1] <= 352:
                 start_screen()
                 start_game()
+
+
+def start_screen():
+    global USER_NAME
+    fon = pygame.transform.scale(load_image('Start_Fon.png'), (WIDTH, HEIGHT))
+    displaysurface.blit(fon, (0, 0))
+    name = "Введите имя"
+    while True:
+        font = pygame.font.SysFont("Verdana", 20)
+        for event in pygame.event.get():
+            if event.type == pygame.KEYDOWN:
+                if event.unicode.isalpha():
+                    name += event.unicode
+                elif event.key == pygame.K_BACKSPACE:
+                    if name == "Введите имя":
+                        name = ''
+                    else:
+                        name = name[0:-1]
+            USER_NAME = name
+            displaysurface.blit(start_desk, (0, 0))
+            text_name = font.render(name, True, (255, 255, 255))
+            displaysurface.blit(text_name, (130, 380))
+            pygame.display.update()
+            if event.type == pygame.QUIT:  # (148, 217), (267, 271)
+                terminate()
+            elif event.type == pygame.MOUSEBUTTONDOWN and 148 <= pygame.mouse.get_pos()[0] <= 267 and 217 <= \
+                    pygame.mouse.get_pos()[1] <= 271:
+                start_game()
+
+            elif event.type == pygame.MOUSEBUTTONDOWN and 148 <= pygame.mouse.get_pos()[0] <= 267 and 297 <= \
+                    pygame.mouse.get_pos()[1] <= 353:
+                print(1)
+
+            pygame.display.flip()
+            FramePerSec.tick(FPS)
 
 
 start_screen()
