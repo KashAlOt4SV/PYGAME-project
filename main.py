@@ -287,7 +287,10 @@ def show_go_screen():
         if (' ' + str(USER_NAME) + ' - ') in str(FileText):
             print('Имя уже зарегистрировано')
         else:
-            RecordsFile.write(str(' ' + str(USER_NAME) + ' - ' + str(Player.score) + '\n'))
+            if ' {}'.format(Player.score) in str(FileText):
+                pass
+            else:
+                RecordsFile.write(str(' ' + str(USER_NAME) + ' - ' + str(Player.score) + '\n'))
     RecordsFile.close()
 
     displaysurface.blit(bg_end, background_rect)
@@ -327,6 +330,8 @@ def RecordStatistic():
         thelist_of_highrecords.append(i)
     thelist_of_highrecords.reverse()
     for i in thelist_of_highrecords:
+        if count >= 6:
+            break
         for x in FileText:
             FileTextu = x.split(' ')
             if i == int(FileTextu[3]):
