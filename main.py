@@ -4,6 +4,7 @@ import sys
 import random
 import time
 import os
+import ctypes
 
 pygame.init()
 vec = pygame.math.Vector2
@@ -53,6 +54,7 @@ bg = pygame.transform.scale(load_image('fon_dodle.png'), (WIDTH, HEIGHT))
 background_rect = bg.get_rect()
 bg_end = pygame.transform.scale(load_image('End_Fon.png'), (WIDTH, HEIGHT))
 start_desk = pygame.transform.scale(load_image('StartName.png'), (WIDTH, HEIGHT))
+stat_fon = pygame.transform.scale(load_image('StatFon.png'), (WIDTH, HEIGHT))
 
 
 class Player(pygame.sprite.Sprite):
@@ -206,7 +208,6 @@ USER_NAME = None
 
 def start_game():
     global USER_NAME
-    restart = False
     while True:
         P1.update()
         for event in pygame.event.get():
@@ -220,9 +221,6 @@ def start_game():
                 if event.key == pygame.K_SPACE:
                     sound1.play()
                     P1.cancel_jump()
-            if event.type == pygame.K_ESCAPE:
-                restart = True
-        if restart:
             if P1.rect.top > HEIGHT:
                 for entity in all_sprites:
                     entity.kill()
@@ -282,14 +280,15 @@ def start_game():
 def show_go_screen():
     FullFile = os.path.join('data', 'records.txt')
     RecordsFile = open(FullFile, 'a')
+    Forma = open(FullFile, mode="rt")
+    FileText = Forma.readlines()
 
-    if USER_NAME != 'Введите имя':
+    if USER_NAME != 'Введите имя' and USER_NAME != '':
         if (' ' + str(USER_NAME) + ' - ') in str(FileText):
             print('Имя уже зарегистрировано')
         else:
             RecordsFile.write(str(' ' + str(USER_NAME) + ' - ' + str(Player.score) + '\n'))
     RecordsFile.close()
-
 
     displaysurface.blit(bg_end, background_rect)
     draw_text(displaysurface, "Ваш счёт составил: {}".format(Player.score), 18,
@@ -308,22 +307,39 @@ def show_go_screen():
 
 
 def RecordStatistic():
-    displaysurface.blit(bg, background_rect)
+    displaysurface.blit(stat_fon, background_rect)
     FullFile = os.path.join('data', 'records.txt')
     Forma = open(FullFile, mode="rt")
     FileText = Forma.readlines()
-
-    for i in range(len(FileText)):
-        FileTexts = FileText[i].split(' ')
-
-        draw_text(displaysurface, '{} место - {}, счёт: {}'.format(i + 1, FileTexts[1], str(FileTexts[3])), 18,
-                  WIDTH / 2, 185 + i * 30)
+    thelist_of_highrecords = []
+    probel = 1
+    for i in FileText:
+        FileTexts = i.split(' ')
+        thelist_of_highrecords.append(int(str(FileTexts[3][:-1])))
+        count = 1
+        thelist_of_highrecords = sorted(thelist_of_highrecords)
+        thelist_of_highrecords.reverse()
+        theset_of_highrecords = set()
+    for i in thelist_of_highrecords:
+        theset_of_highrecords.add(i)
+    thelist_of_highrecords = []
+    for i in theset_of_highrecords:
+        thelist_of_highrecords.append(i)
+    thelist_of_highrecords.reverse()
+    for i in thelist_of_highrecords:
+        for x in FileText:
+            FileTextu = x.split(' ')
+            if i == int(FileTextu[3]):
+                draw_text(displaysurface, '{} место - {}, счёт: {}'.format(count, FileTextu[1], str(FileTextu[3])), 18,
+                          WIDTH / 2, 185 + probel * 30)
+        probel += 1
+        count += 1
     pygame.display.flip()
     FramePerSec.tick(FPS)
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
-        elif event.type == pygame.MOUSEBUTTONDOWN and 148 <= pygame.mouse.get_pos()[0] <= 267 and 307 <= \
+        if event.type == pygame.MOUSEBUTTONDOWN and 148 <= pygame.mouse.get_pos()[0] <= 267 and 0 <= \
                 pygame.mouse.get_pos()[1] <= 371:
             start_screen()
 
@@ -355,11 +371,17 @@ def start_screen():
             elif event.type == pygame.MOUSEBUTTONDOWN and 148 <= pygame.mouse.get_pos()[0] <= 267 and 217 <= \
                     pygame.mouse.get_pos()[1] <= 271:
                 start_game()
-
+            elif event.type == pygame.MOUSEBUTTONDOWN and 148 <= pygame.mouse.get_pos()[0] <= 267 and 0 <= \
+                    pygame.mouse.get_pos()[1] <= 70:
+                fon = pygame.transform.scale(load_image('Start_Fon.png'), (WIDTH, HEIGHT))
+                displaysurface.blit(fon, (0, 0))
             elif event.type == pygame.MOUSEBUTTONDOWN and 148 <= pygame.mouse.get_pos()[0] <= 267 and 297 <= \
                     pygame.mouse.get_pos()[1] <= 353:
                 RecordStatistic()
 
+                name = ''
+                text_name = font.render(name, True, (255, 255, 255))
+                displaysurface.blit(text_name, (130, 380))
             pygame.display.flip()
             FramePerSec.tick(FPS)
 
